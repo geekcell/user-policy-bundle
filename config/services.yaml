@@ -1,0 +1,14 @@
+services:
+    geek_cell.user_policy.policy_registry:
+        class: GeekCell\UserPolicyBundle\Policy\PolicyRegistry
+        arguments:
+            - '@geek_cell.user_policy.policy_guesser'
+        public: false
+
+    GeekCell\UserPolicyBundle\Policy\PolicyRegistry:
+        alias: geek_cell.user_policy.policy_registry
+        public: true
+
+    geek_cell.user_policy.policy_guesser:
+        class: GeekCell\UserPolicyBundle\Policy\PolicyGuesser
+        public: false
