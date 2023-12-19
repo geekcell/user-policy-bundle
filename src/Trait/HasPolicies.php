@@ -30,8 +30,6 @@ trait HasPolicies
      */
     public function can(string $ability, mixed $subject, mixed ...$extraArgs): bool
     {
-        $this->ensureUserInterface();
-
         $methodArgs = [$this];
         if (is_object($subject)) {
             $methodArgs[] = $subject;
@@ -72,10 +70,12 @@ trait HasPolicies
     }
 
     /**
-     * Check if user has role
+     * Check if user has role.
+     * User must implement UserInterface.
      *
      * @param string $role
      * @return bool
+     * @throws \BadMethodCallException
      */
     public function is(string $role): bool
     {
