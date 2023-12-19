@@ -18,7 +18,7 @@ trait HasPolicies
 {
     /**
      * Check if user can do something with subject via a policy. A subject can be a class name or an object.
-     * There can be optinal extra arguments, which will be passed to policy method.
+     * There can be optional extra arguments, which will be passed to policy method.
      *
      * @param string $ability
      * @param class-string|object $subject
@@ -28,7 +28,7 @@ trait HasPolicies
      *
      * @throws \UnexpectedValueException
      */
-    public function can(string $ability, mixed $subject, mixed ...$extraArgs): bool
+    public function can(string $ability, mixed $subject = null, mixed ...$extraArgs): bool
     {
         $this->ensureUserInterface();
 
@@ -38,9 +38,9 @@ trait HasPolicies
             $subject = $subject::class;
         }
 
-        if (!class_exists($subject)) {
-            return false;
-        }
+//        if (!class_exists($subject)) {
+//            return false;
+//        }
 
         $policy = PolicyRegistry::get($subject);
         $policyReflectionClass = new \ReflectionClass($policy);

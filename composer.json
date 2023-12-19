@@ -2,17 +2,26 @@
     "name": "geekcell/user-policy-bundle",
     "type": "symfony-bundle",
     "license": "MIT",
+    "authors": [
+        {
+            "name": "Pascal Cremer",
+            "email": "pascal.cremer@geekcell.io"
+        },
+        {
+            "name": "Jan van Thoor",
+            "email": "jan.vanthoor@geekcell.io"
+        }
+    ],
     "autoload": {
         "psr-4": {
             "GeekCell\\UserPolicyBundle\\": "src/"
         }
     },
-    "authors": [
-        {
-            "name": "Pascal Cremer",
-            "email": "pascal.cremer@geekcell.io"
+    "autoload-dev": {
+        "psr-4": {
+            "GeekCell\\UserPolicyBundle\\Tests\\": "tests/"
         }
-    ],
+    },
     "require": {
         "symfony/security-core": "^6.3",
         "symfony/http-kernel": "^6.3",
@@ -22,6 +31,7 @@
         "lstrojny/functional-php": "^1.17"
     },
     "require-dev": {
-        "symfony/maker-bundle": "^1.49"
+        "symfony/maker-bundle": "^1.49",
+        "phpunit/phpunit": "^10.5"
     }
 }
