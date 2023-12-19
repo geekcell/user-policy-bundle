@@ -21,7 +21,7 @@ class GeekCellUserPolicyBundle extends AbstractBundle
     /**
      * {@inheritdoc}
      */
-    public function build(ContainerBuilder $container)
+    public function build(ContainerBuilder $container): void
     {
         parent::build($container);
 
@@ -39,7 +39,7 @@ class GeekCellUserPolicyBundle extends AbstractBundle
     /**
      * {@inheritdoc}
      */
-    public function boot()
+    public function boot(): void
     {
         parent::boot();
 

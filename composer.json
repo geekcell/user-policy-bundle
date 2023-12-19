@@ -14,14 +14,14 @@
         }
     ],
     "require": {
-        "symfony/security-core": "^6.3",
-        "symfony/http-kernel": "^6.3",
         "geekcell/container-facade": "^1.0",
-        "symfony/dependency-injection": "^6.3",
-        "symfony/config": "^6.3",
-        "lstrojny/functional-php": "^1.17"
+        "lstrojny/functional-php": "^1.17",
+        "symfony/security-core": "^6.3|^7.0",
+        "symfony/http-kernel": "^6.3|^7.0",
+        "symfony/dependency-injection": "^6.3|^7.0",
+        "symfony/config": "^6.3|^7.0"
     },
     "require-dev": {
-        "symfony/maker-bundle": "^1.49"
+        "symfony/maker-bundle": "^1.52"
     }
 }

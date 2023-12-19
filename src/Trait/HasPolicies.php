@@ -18,7 +18,7 @@ trait HasPolicies
 {
     /**
      * Check if user can do something with subject via a policy. A subject can be a class name or an object.
-     * There can be optinal extra arguments, which will be passed to policy method.
+     * There can be optional extra arguments, which will be passed to policy method.
      *
      * @param string $ability
      * @param class-string|object $subject
