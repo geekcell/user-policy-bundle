@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/geekcell/user-policy-bundle/compare/v1.1.0...v1.2.0) (2023-12-19)
+
+
+### Miscellaneous Chores
+
+* release 1.2.0 ([3e5af20](https://github.com/geekcell/user-policy-bundle/commit/3e5af20b61bee4ad13b216929ad2e4da123ecb98))
+
 ## [1.1.0](https://github.com/geekcell/user-policy-bundle/compare/v1.0.0...v1.1.0) (2023-12-19)
 
 
