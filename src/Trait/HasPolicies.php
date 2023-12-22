@@ -4,8 +4,14 @@ declare(strict_types=1);
 
 namespace GeekCell\UserPolicyBundle\Trait;
 
-use GeekCell\UserPolicyBundle\Support\Facade\PolicyRegistry;
+use BadMethodCallException;
+use GeekCell\UserPolicyBundle\Contracts\Policy;
+use GeekCell\UserPolicyBundle\Policy\PolicyRegistry;
+use GeekCell\UserPolicyBundle\Support\Facade\PolicyRegistry as PolicyRegistryFacade;
+use InvalidArgumentException;
+use ReflectionException;
 use Symfony\Component\Security\Core\User\UserInterface;
+use UnexpectedValueException;
 
 use function Functional\map;
 
@@ -22,15 +28,16 @@ trait HasPolicies
      *
      * @param string $ability
      * @param class-string|object $subject
-     * @param array<mixed> $extraArgs
+     * @param mixed ...$extraArgs
      *
      * @return bool
      *
-     * @throws \UnexpectedValueException
+     * @throws UnexpectedValueException
+     * @throws ReflectionException
      */
-    public function can(string $ability, mixed $subject, mixed ...$extraArgs): bool
+    public function can(string $ability, string|object $subject, mixed ...$extraArgs): bool
     {
-        $methodArgs = [$this];
+        $methodArgs = [];
         if (is_object($subject)) {
             $methodArgs[] = $subject;
             $subject = $subject::class;
@@ -40,23 +47,36 @@ trait HasPolicies
             return false;
         }
 
-        $policy = PolicyRegistry::get($subject);
-        $policyReflectionClass = new \ReflectionClass($policy);
-
-        if (!$policyReflectionClass->hasMethod($ability)) {
-            return false;
-        }
-
-        $policyMethod = $policyReflectionClass->getMethod($ability);
-        $returnType = $policyMethod->getReturnType();
-
-        if ($returnType === null || $returnType->getName() !== 'bool') {
-            throw new \UnexpectedValueException(
-                sprintf('Method "%s" of policy "%s" must return bool.', $ability, $policyReflectionClass->getName())
+        /** @see PolicyRegistry::get() */
+        $policy = PolicyRegistryFacade::get($subject);
+        if ($policy === null) {
+            throw new InvalidArgumentException(
+                sprintf(
+                    'Could not find policy for subject "%s". Try implementing the %s (marker) interface (and configuring it in your services.yaml file) or manually registering the policy for the class by calling %s::register',
+                    $subject,
+                    PolicyRegistry::class,
+                    Policy::class
+                )
             );
         }
 
-        return $policyMethod->invokeArgs($policy, \array_merge($methodArgs, $extraArgs));
+        if (!method_exists($policy, $ability)) {
+            return false;
+        }
+
+        $result = $policy->{$ability}($this, ...$methodArgs, ...$extraArgs);
+        if (!is_bool($result)) {
+            throw new UnexpectedValueException(
+                sprintf(
+                    'Method "%s" of policy "%s" was expected to return a boolean value. Instead it returned a value of type "%s".',
+                    $ability,
+                    $policy::class,
+                    get_debug_type($result)
+                )
+            );
+        }
+
+        return $result;
     }
 
     /**
@@ -75,11 +95,19 @@ trait HasPolicies
      *
      * @param string $role
      * @return bool
-     * @throws \BadMethodCallException
+     * @throws BadMethodCallException
      */
     public function is(string $role): bool
     {
-        $this->ensureUserInterface();
+        if (!$this instanceof UserInterface) {
+            throw new BadMethodCallException(
+                sprintf(
+                    'Class "%s" must implement "%s" interface.',
+                    static::class,
+                    UserInterface::class
+                )
+            );
+        }
 
         $normalizedRoles = map(
             $this->getRoles(),
@@ -107,7 +135,7 @@ trait HasPolicies
      *
      * @return bool
      *
-     * @throws \BadMethodCallException
+     * @throws BadMethodCallException
      */
     public function __call(string $name, array $arguments): bool
     {
@@ -131,24 +159,6 @@ trait HasPolicies
             return $this->is($role);
         }
 
-        throw new \BadMethodCallException(sprintf('Method "%s" does not exist.', $name));
-    }
-
-    /**
-     * Ensure that this trait is only used in classes, which implement UserInterface.
-     *
-     * @throws \BadMethodCallException
-     */
-    private function ensureUserInterface(): void
-    {
-        if (!$this instanceof UserInterface) {
-            throw new \BadMethodCallException(
-                sprintf(
-                    'Class "%s" must implement "%s" interface.',
-                    static::class,
-                    UserInterface::class
-                )
-            );
-        }
+        throw new BadMethodCallException(sprintf('Method "%s" does not exist.', $name));
     }
 }

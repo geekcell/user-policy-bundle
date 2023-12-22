@@ -64,7 +64,7 @@ services:
 
 These lines are crucial for Symfony to auto-discover the policies defined in your app. Alternatively, policies can be manually configured or even guessed by name, but these methods are not recommended.
 
-Please also the `HasPolicies` trait to you user class.
+Now add the `HasPolicies` trait to you user class.
 
 ```php
 <?php
